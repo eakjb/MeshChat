@@ -10,10 +10,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import com.eakjb.meshchat.gui.MeshChatWindow;
+
 public class ChatSystem implements Runnable, ChatConstants {
 	private final ArrayList<String> addresses = new ArrayList<String>();
 	private final ArrayList<String> chats = new ArrayList<String>();
 	private final RecieveServer recieveServer = new RecieveServer(this);
+	private final MeshChatWindow frame = new MeshChatWindow(this);
 	
 	private String username = "NoName";
 	
@@ -21,6 +24,18 @@ public class ChatSystem implements Runnable, ChatConstants {
 
 	public void run() {
 		recieveServer.start();
+		frame.setVisible(true);
+	}
+	
+	public void updateUI() {
+		StringBuffer b = new StringBuffer();
+		
+		for (String chat : chats) {
+			b.append(chat);
+			b.append("\n");
+		}
+		
+		frame.getTextArea().setText(b.toString());
 	}
 	
 	public void updateAddresses(String address) throws IOException {
@@ -49,6 +64,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 			Thread t = new Thread(new SendHandler(addr,chat));
 			t.start();
 		}
+		addChat(chat);
 	}
 	
 	private class SendHandler implements Runnable {
@@ -77,6 +93,8 @@ public class ChatSystem implements Runnable, ChatConstants {
 	
 	public void addChat(String chat) {
 		chats.add(chat);
+		System.out.println("Chat Added: "+chat);
+		updateUI();
 	}
 	
 	public void addClients(Collection<String> addrs) {
