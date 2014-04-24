@@ -3,11 +3,13 @@ package com.eakjb.meshchat.gui;
 import java.awt.BorderLayout;
 import java.awt.Event;
 import java.awt.Font;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,6 +25,7 @@ import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
 import com.eakjb.meshchat.ChatSystem;
+import com.eakjb.meshchat.ErrorHandler;
 
 public class MeshChatWindow extends JFrame {
 
@@ -33,11 +36,11 @@ public class MeshChatWindow extends JFrame {
 	
 	private final ChatSystem chatSystem;
 	
-	
 	private JPanel contentPane;
 	private JTextField textField;
 	private JTextArea textArea;
 	private JScrollPane mainAreaScroller;
+	
 	public JScrollPane getMainAreaScroller() {
 		return mainAreaScroller;
 	}
@@ -77,6 +80,25 @@ public class MeshChatWindow extends JFrame {
 		menuBar.add(fileMenu);
 		
 		JMenu userMenu = new JMenu("User");
+		
+		JMenuItem connectButton = new JMenuItem("Connect Network");
+		connectButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					chatSystem.updateAddresses(JOptionPane.showInputDialog("Foreign Address: "));
+				} catch (HeadlessException e) {
+					ErrorHandler.handle(e);
+				} catch (IOException e) {
+					ErrorHandler.handle(e);
+				}
+				
+			}
+			
+		});
+		connectButton.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,Event.CTRL_MASK));
+		
 		JMenuItem changeNameButton = new JMenuItem("Change Username");
 		changeNameButton.addActionListener(new ActionListener() {
 
@@ -86,8 +108,10 @@ public class MeshChatWindow extends JFrame {
 			}
 			
 		});
-		changeNameButton.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,Event.CTRL_MASK));
+		changeNameButton.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,Event.CTRL_MASK));
+		
 		userMenu.add(changeNameButton);
+		userMenu.add(connectButton);
 		menuBar.add(userMenu);
 		
 		setJMenuBar(menuBar);
