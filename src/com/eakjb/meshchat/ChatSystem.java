@@ -117,7 +117,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 	
 	public void addChat(String chat) {
 		chats.add(chat);
-		System.out.println("Chat Added: "+chat);
+		System.out.println(chat);
 		updateUI();
 	}
 	
