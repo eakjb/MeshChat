@@ -36,9 +36,8 @@ public class RecieveServer implements Runnable, ChatConstants {
 				
 				BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 				StringBuffer b = new StringBuffer();
-				String line;
-				while((line=in.readLine())!=null) {
-					b.append(line);
+				while(in.ready()) {
+					b.append(in.readLine());
 				}
 				
 				//Split into metadata and data then individual datum and passes it to DA system
