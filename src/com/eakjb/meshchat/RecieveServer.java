@@ -31,6 +31,9 @@ public class RecieveServer implements Runnable, ChatConstants {
 		@Override
 		public void run() {
 			try {
+				System.out.println(sock.getRemoteSocketAddress().toString());
+				chatSystem.addClient(sock.getRemoteSocketAddress().toString().split(":")[0].replace("/", ""));
+				
 				BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 				StringBuffer b = new StringBuffer();
 				String line;

@@ -75,11 +75,12 @@ public class ChatSystem implements Runnable, ChatConstants {
 	}
 	
 	public void sendChat(String chat) {
+		String msg = CHATBRACKETL+username+CHATBRACKETR+" "+chat;
 		for (String addr : addresses) {
-			Thread t = new Thread(new SendHandler(addr,chat));
+			Thread t = new Thread(new SendHandler(addr,msg));
 			t.start();
 		}
-		addChat(chat);
+		addChat(msg);
 	}
 	
 	private class SendHandler implements Runnable {
@@ -96,7 +97,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 			try {
 				Socket sock = new Socket(addr,PORT);
 				BufferedWriter out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
-				out.write("0"+METASEPARATOR+CHATBRACKETL+username+CHATBRACKETR+chat);
+				out.write("0"+METASEPARATOR+chat);
 				out.flush();
 				out.close();
 				sock.close();
@@ -112,8 +113,16 @@ public class ChatSystem implements Runnable, ChatConstants {
 		updateUI();
 	}
 	
+	public void addClient(String client) {
+		if (!addresses.contains(client)) {
+			addresses.add(client);
+		}
+	}
+	
 	public void addClients(Collection<String> addrs) {
-		addresses.addAll(addrs);
+		for (String c : addrs) {
+			addClient(c);
+		}
 	}
 	public void addClients(String[] addrs) {
 		addClients(Arrays.asList(addrs));

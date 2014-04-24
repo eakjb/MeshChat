@@ -9,7 +9,7 @@ public class MeshChat {
 		try {
 			ChatSystem sys = new ChatSystem();
 			System.out.println("Updating adresses");
-			sys.updateAddresses("BILLINGSJM");
+			sys.updateAddresses("192.168.1.126");
 			System.out.println("Addresses updated.");
 			sys.run();
 		} catch (IOException e) {
