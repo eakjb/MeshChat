@@ -80,7 +80,6 @@ public class ChatSystem implements Runnable, ChatConstants {
 			Thread t = new Thread(new SendHandler(addr,msg));
 			t.start();
 		}
-		addChat(msg);
 	}
 	
 	private class SendHandler implements Runnable {
