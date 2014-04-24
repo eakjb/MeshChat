@@ -29,7 +29,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 		this(InetAddress.getLocalHost().getHostName());
 	}
 	
-	public ChatSystem(String localHostName) {
+	public ChatSystem(String localHostName) throws UnknownHostException {
 		this.setLocalHostName(localHostName);
 	}
 
@@ -112,18 +112,19 @@ public class ChatSystem implements Runnable, ChatConstants {
 		updateUI();
 	}
 	
-	public void addClient(String client) {
-		if (!addresses.contains(client)) {
-			addresses.add(client);
+	public void addClient(String client) throws UnknownHostException {
+		String ip = InetAddress.getByName(client).getHostAddress();
+		if (!addresses.contains(ip)) {
+			addresses.add(ip);
 		}
 	}
 	
-	public void addClients(Collection<String> addrs) {
+	public void addClients(Collection<String> addrs) throws UnknownHostException {
 		for (String c : addrs) {
 			addClient(c);
 		}
 	}
-	public void addClients(String[] addrs) {
+	public void addClients(String[] addrs) throws UnknownHostException {
 		addClients(Arrays.asList(addrs));
 	}
 	
@@ -151,7 +152,9 @@ public class ChatSystem implements Runnable, ChatConstants {
 		return localHostName;
 	}
 
-	public void setLocalHostName(String localHostName) {
+	public void setLocalHostName(String localHostName) throws UnknownHostException {
+		this.getAddresses().remove(this.localHostName);
+		this.addClient(localHostName);
 		this.localHostName = localHostName;
 	}
 }
