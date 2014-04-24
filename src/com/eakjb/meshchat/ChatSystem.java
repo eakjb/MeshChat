@@ -5,7 +5,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,10 +19,19 @@ public class ChatSystem implements Runnable, ChatConstants {
 	private final ArrayList<String> chats = new ArrayList<String>();
 	private final RecieveServer recieveServer = new RecieveServer(this);
 	private final MeshChatWindow frame = new MeshChatWindow(this);
+	private String localHostName;
 	
 	private String username = "NoName";
 	
 	private boolean running = true;
+	
+	public ChatSystem() throws UnknownHostException {
+		this(InetAddress.getLocalHost().getHostName());
+	}
+	
+	public ChatSystem(String localHostName) {
+		this.setLocalHostName(localHostName);
+	}
 
 	public void run() {
 		recieveServer.start();
@@ -43,15 +54,19 @@ public class ChatSystem implements Runnable, ChatConstants {
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
 		BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 		
-		out.write("1"+METASEPARATOR);
+		System.out.println("Writing message...");
+		out.write("1"+METASEPARATOR+"\n");
 		out.flush();
+
+		System.out.println("Waiting for response...");
 		
 		StringBuffer b = new StringBuffer();
 		String line;
 		while((line=in.readLine())!=null) {
 			b.append(line);
+			System.out.println(b.toString());
 		}
-		
+
 		addClients(b.toString().split(ADDRSEPARATOR));
 		
 		in.close();
@@ -122,5 +137,13 @@ public class ChatSystem implements Runnable, ChatConstants {
 
 	public ArrayList<String> getChats() {
 		return chats;
+	}
+
+	public String getLocalHostName() {
+		return localHostName;
+	}
+
+	public void setLocalHostName(String localHostName) {
+		this.localHostName = localHostName;
 	}
 }

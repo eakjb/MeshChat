@@ -9,6 +9,7 @@ public class ErrorHandler {
 	}
 	public ErrorHandler(Throwable err, HandlerMode mode) {
 		this.err=err;
+		this.mode=mode;
 	}
 	
 	public static void handle(Throwable err, HandlerMode mode) {

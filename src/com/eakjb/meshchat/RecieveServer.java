@@ -55,6 +55,14 @@ public class RecieveServer implements Runnable, ChatConstants {
 						b1.append(a);
 						b1.append(ADDRSEPARATOR);
 					}
+					
+					//Add local machine
+					b1.append(chatSystem.getLocalHostName());
+					b1.append(ADDRSEPARATOR);					
+					
+					//Needed for a readLine()
+					b1.append("\n");
+					
 					out.write(b1.toString());
 					out.flush();
 					out.close();
