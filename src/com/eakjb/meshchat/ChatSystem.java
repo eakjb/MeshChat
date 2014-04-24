@@ -21,8 +21,16 @@ public class ChatSystem implements Runnable, ChatConstants {
 	private final MeshChatWindow frame = new MeshChatWindow(this);
 	private String localHostName;
 	
-	private String username = "NoName";
+	private String username = DEFAULTUSERNAME;
 	
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
 	private boolean running = true;
 	
 	public ChatSystem() throws UnknownHostException {
@@ -38,7 +46,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 		frame.setVisible(true);
 	}
 	
-	public void updateUI() {
+	public void updateUI() {		
 		StringBuffer b = new StringBuffer();
 		
 		for (String chat : chats) {
@@ -47,6 +55,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 		}
 		
 		frame.getTextArea().setText(b.toString());
+		frame.getMainAreaScroller().getVerticalScrollBar().setValue(frame.getMainAreaScroller().getVerticalScrollBar().getMaximum());
 	}
 	
 	public void updateAddresses(String address) throws IOException {
