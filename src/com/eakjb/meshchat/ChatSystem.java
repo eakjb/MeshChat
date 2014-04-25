@@ -63,17 +63,17 @@ public class ChatSystem implements Runnable, ChatConstants {
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
 		BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 		
-		System.out.println("Writing message...");
+		//System.out.println("Writing message...");
 		out.write("1"+METASEPARATOR+"\n");
 		out.flush();
 
-		System.out.println("Waiting for response...");
+		//System.out.println("Waiting for response...");
 		
 		StringBuffer b = new StringBuffer();
 		String line;
 		while((line=in.readLine())!=null) {
 			b.append(line);
-			System.out.println(b.toString());
+			//System.out.println(b.toString());
 		}
 
 		addClients(b.toString().split(ADDRSEPARATOR));
@@ -81,14 +81,19 @@ public class ChatSystem implements Runnable, ChatConstants {
 		in.close();
 		out.close();
 		sock.close();
+		
+		sendChat(username+CONNECTMESSAGE);
 	}
 	
 	public void sendChat(String chat) {
-		String msg = CHATBRACKETL+username+CHATBRACKETR+" "+chat;
+		sendStr(CHATBRACKETL+username+CHATBRACKETR+" "+chat);
+	}
+	
+	public void sendStr(String msg) {
 		for (String addr : addresses) {
 			Thread t = new Thread(new SendHandler(addr,msg));
 			t.start();
-		}
+		}		
 	}
 	
 	private class SendHandler implements Runnable {
