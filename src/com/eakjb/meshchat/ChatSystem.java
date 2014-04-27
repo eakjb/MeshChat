@@ -83,7 +83,11 @@ public class ChatSystem implements Runnable, ChatConstants {
 	}
 
 	public void sendChat(String chat) {
-		sendStr(CHATBRACKETL+username+CHATBRACKETR+" "+chat);
+		String parsed=CHATBRACKETL+username+CHATBRACKETR+" "+chat;
+		for (String s : ILLEGALPHRASES) {
+			parsed=parsed.replace(s, "");
+		}
+		sendStr(parsed);
 	}
 
 	public void sendStr(String msg) {
