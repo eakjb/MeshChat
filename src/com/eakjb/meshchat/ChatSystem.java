@@ -129,30 +129,37 @@ public class ChatSystem implements Runnable, ChatConstants {
 		try {
 			ArrayList<String> URLs = new ArrayList<String>();
 
-			Pattern pattern = Pattern.compile(IMGREGEX);
+			Pattern pattern = Pattern.compile(URLREGEX);
 			Matcher matcher = pattern.matcher(chat);
 			while (matcher.find()) {
-				URLs.add(matcher.group().replace(IMGTAGLEFT, "").replace(IMGTAGRIGHT, ""));
+				URLs.add(matcher.group());
 			}
 
-			for (String s : chat.split(IMGSPLITREGEX)) {
-				//System.out.println(s);
+			for (String s : chat.split(URLSPLITREGEX)) {
+				System.out.println(s);
 				if (URLs.contains(s)) {
-					BufferedImage img = loadImageFromURL(s);
-					if (img != null) {
-						ImageIcon icon;
-						
-						if (img.getWidth()>IMGWIDTH) {
-							icon=new ImageIcon(img.getScaledInstance(IMGWIDTH, IMGWIDTH*img.getHeight()/img.getWidth(),Image.SCALE_SMOOTH));
-						} else {
-							icon=new ImageIcon(img);
+					if (s.contains(IMGTAGLEFT)) {
+						BufferedImage img = loadImageFromURL(s.replace(IMGTAGLEFT, "").replace(IMGTAGRIGHT, ""));
+						if (img != null) {
+							ImageIcon icon;
+
+							if (img.getWidth()>IMGWIDTH) {
+								icon=new ImageIcon(img.getScaledInstance(IMGWIDTH, IMGWIDTH*img.getHeight()/img.getWidth(),Image.SCALE_SMOOTH));
+							} else {
+								icon=new ImageIcon(img);
+							}
+
+							frame.getTextArea().getDocument().insertString(
+									frame.getTextArea().getDocument().getEndPosition()
+									.getOffset()," ", null);
+							frame.getTextArea().setCaretPosition(frame.getTextArea().getDocument().getEndPosition().getOffset()-1);
+							frame.getTextArea().insertIcon(icon);
 						}
-						
-						frame.getTextArea().setCaretPosition(frame.getTextArea().getDocument().getEndPosition().getOffset()-1);
-						frame.getTextArea().insertIcon(icon);
+					} else {
+						frame.getTextArea().getDocument().insertString(frame.getTextArea().getDocument().getEndPosition().getOffset(), s+" ", null);
 					}
 				} else {
-					frame.getTextArea().getDocument().insertString(frame.getTextArea().getDocument().getEndPosition().getOffset(), s, null);
+					frame.getTextArea().getDocument().insertString(frame.getTextArea().getDocument().getEndPosition().getOffset(), s+" ", null);
 				}
 			}
 			frame.getTextArea().getDocument().insertString(frame.getTextArea().getDocument().getEndPosition().getOffset(), "\n", null);
@@ -160,7 +167,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 			ErrorHandler.handle(e);
 		}
 	}
-	
+
 	public static BufferedImage loadImageFromURL(String url) {
 		BufferedImage img = null;
 		try {

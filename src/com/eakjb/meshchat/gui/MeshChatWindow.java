@@ -128,7 +128,8 @@ public class MeshChatWindow extends JFrame implements ChatConstants {
 		JMenuItem mntmSendImage = new JMenuItem("Send Image...");
 		mntmSendImage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				chatSystem.sendChat(IMGTAGLEFT+JOptionPane.showInputDialog("Image URL:")+IMGTAGRIGHT);
+				String img = JOptionPane.showInputDialog("Image URL:");
+				if (img!=null)chatSystem.sendChat(IMGTAGLEFT+img+IMGTAGRIGHT);
 			}
 		});
 		mntmSendImage.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));

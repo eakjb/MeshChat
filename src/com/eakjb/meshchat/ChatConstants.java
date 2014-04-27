@@ -11,8 +11,8 @@ public interface ChatConstants {
 	public static final String WELCOMEMESSAGE = "Welcome to the system.";
 	public static final String IMGTAGLEFT = "<";
 	public static final String IMGTAGRIGHT = ">";
-	public static final String IMGREGEX = IMGTAGLEFT+".*"+IMGTAGRIGHT;
-	public static final String IMGSPLITREGEX = "[\\"+IMGTAGLEFT+"|\\"+IMGTAGRIGHT+"]";
+	public static final String URLREGEX = IMGTAGLEFT+"?https?://(([A-Za-z0-9]*)\\.?)*/.*"+IMGTAGRIGHT+"?";
+	public static final String URLSPLITREGEX = " ";//"[\\"+IMGTAGLEFT+"|\\"+IMGTAGRIGHT+"]";
 	public static final String UNKNOWNIMAGEPATH = "/img/question_mark.png";
 	public static final String BUGREPORTURI = "http://github.com/eakjb/MeshChat/issues";
 	

@@ -45,7 +45,7 @@ public class ImageSearchWindow extends JFrame implements ChatConstants {
 	private JSONObject json = null;
 	private int index = 0;
 	private BufferedImage img;
-	
+
 	private final ChatSystem chatSystem;
 
 	/**
@@ -53,7 +53,7 @@ public class ImageSearchWindow extends JFrame implements ChatConstants {
 	 */
 	public ImageSearchWindow(final ChatSystem chatSystem) {
 		this.chatSystem=chatSystem;
-		
+
 		setTitle("Image Search");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -61,7 +61,7 @@ public class ImageSearchWindow extends JFrame implements ChatConstants {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
-		
+
 		contentPane.addComponentListener(new ComponentListener() {
 			@Override
 			public void componentResized(ComponentEvent e) {
@@ -167,21 +167,23 @@ public class ImageSearchWindow extends JFrame implements ChatConstants {
 	}
 
 	public void setIndex(int index) {
-		this.index = index;
-		if (index>json.getJSONObject("responseData").getJSONArray("results").length()-1) {
-			this.index=0;
-		} else if (index<0) {
-			this.index=json.getJSONObject("responseData").getJSONArray("results").length()-1;
+		if (json!=null) {
+			this.index = index;
+			if (index>json.getJSONObject("responseData").getJSONArray("results").length()-1) {
+				this.index=0;
+			} else if (index<0) {
+				this.index=json.getJSONObject("responseData").getJSONArray("results").length()-1;
+			}
+			String url = json.getJSONObject("responseData").getJSONArray("results").getJSONObject(this.index).getString("unescapedUrl");
+			setImg(ChatSystem.loadImageFromURL(url));
+			mainContent.setText("");
 		}
-		String url = json.getJSONObject("responseData").getJSONArray("results").getJSONObject(this.index).getString("unescapedUrl");
-		setImg(ChatSystem.loadImageFromURL(url));
-		mainContent.setText("");
 	}
-	
+
 	public String getURL() {
 		return json.getJSONObject("responseData").getJSONArray("results").getJSONObject(this.index).getString("unescapedUrl");
 	}
-	
+
 	public void setImg(BufferedImage img) {
 		this.img = img;
 		if (img!=null) {
@@ -238,7 +240,7 @@ public class ImageSearchWindow extends JFrame implements ChatConstants {
 						ErrorHandler.handle(e1);
 					};			
 				}
-				
+
 			});
 			t.start();
 		}
