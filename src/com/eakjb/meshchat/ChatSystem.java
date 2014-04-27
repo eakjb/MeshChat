@@ -1,5 +1,6 @@
 package com.eakjb.meshchat;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -133,23 +134,12 @@ public class ChatSystem implements Runnable, ChatConstants {
 			for (String s : chat.split(IMGSPLITREGEX)) {
 				//System.out.println(s);
 				if (URLs.contains(s)) {
-					BufferedImage img = null;
-					try {
-						img = ImageIO.read(new URL(s));
-					} catch (Exception e) {
-						ErrorHandler.handle(e);
-						try {
-							//System.out.println(ChatSystem.class.getResource("/img/question_mark.png").getPath());
-							img = ImageIO.read(ChatSystem.class.getResource(UNKNOWNIMAGEPATH));
-						} catch (Exception e1) {
-							ErrorHandler.handle(e1);
-						}
-					}
+					BufferedImage img = loadImageFromURL(s);
 					if (img != null) {
 						ImageIcon icon;
 						
 						if (img.getWidth()>IMGWIDTH) {
-							icon=new ImageIcon(img.getScaledInstance(IMGWIDTH, IMGWIDTH*img.getHeight()/img.getWidth(),1));
+							icon=new ImageIcon(img.getScaledInstance(IMGWIDTH, IMGWIDTH*img.getHeight()/img.getWidth(),Image.SCALE_SMOOTH));
 						} else {
 							icon=new ImageIcon(img);
 						}
@@ -165,6 +155,22 @@ public class ChatSystem implements Runnable, ChatConstants {
 		} catch (BadLocationException e) {
 			ErrorHandler.handle(e);
 		}
+	}
+	
+	public static BufferedImage loadImageFromURL(String url) {
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(new URL(url));
+		} catch (Exception e) {
+			ErrorHandler.handle(e);
+			try {
+				//System.out.println(ChatSystem.class.getResource("/img/question_mark.png").getPath());
+				img = ImageIO.read(ChatSystem.class.getResource(UNKNOWNIMAGEPATH));
+			} catch (Exception e1) {
+				ErrorHandler.handle(e1);
+			}
+		}
+		return img;
 	}
 
 	public void addClient(String client) throws UnknownHostException {

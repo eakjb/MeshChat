@@ -27,6 +27,7 @@ import javax.swing.border.EmptyBorder;
 import com.eakjb.meshchat.ChatConstants;
 import com.eakjb.meshchat.ChatSystem;
 import com.eakjb.meshchat.ErrorHandler;
+import java.awt.event.InputEvent;
 
 public class MeshChatWindow extends JFrame implements ChatConstants {
 
@@ -42,6 +43,8 @@ public class MeshChatWindow extends JFrame implements ChatConstants {
 	private JTextPane textArea;
 	private JScrollPane mainAreaScroller;
 	
+	private final ImageSearchWindow imgSearchWindow;
+	
 	public JScrollPane getMainAreaScroller() {
 		return mainAreaScroller;
 	}
@@ -51,6 +54,9 @@ public class MeshChatWindow extends JFrame implements ChatConstants {
 	public JTextPane getTextArea() {
 		return textArea;
 	}
+	/**
+	 * @wbp.parser.constructor
+	 */
 	public MeshChatWindow(final ChatSystem chatSystem) {
 		this(chatSystem,WELCOMEMESSAGE);
 	}
@@ -59,6 +65,8 @@ public class MeshChatWindow extends JFrame implements ChatConstants {
 	 */
 	public MeshChatWindow(final ChatSystem chatSystem,String welcomeMessage) {
 		this.chatSystem=chatSystem;
+		
+		imgSearchWindow = new ImageSearchWindow(chatSystem);
 		
 		//Establish JFrame
 		setTitle("LemurChat");
@@ -84,7 +92,7 @@ public class MeshChatWindow extends JFrame implements ChatConstants {
 		
 		JMenu userMenu = new JMenu("User");
 		
-		JMenuItem connectButton = new JMenuItem("Connect Network");
+		JMenuItem connectButton = new JMenuItem("Connect Network...");
 		connectButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -102,7 +110,7 @@ public class MeshChatWindow extends JFrame implements ChatConstants {
 		});
 		connectButton.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,Event.CTRL_MASK));
 		
-		JMenuItem changeNameButton = new JMenuItem("Change Username");
+		JMenuItem changeNameButton = new JMenuItem("Change Username...");
 		changeNameButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -111,6 +119,27 @@ public class MeshChatWindow extends JFrame implements ChatConstants {
 			}
 			
 		});
+		
+		JMenu mnChat = new JMenu("Chat");
+		menuBar.add(mnChat);
+		
+		JMenuItem mntmSendImage = new JMenuItem("Send Image...");
+		mntmSendImage.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				chatSystem.sendChat(IMGTAGLEFT+JOptionPane.showInputDialog("Image URL:")+IMGTAGRIGHT);
+			}
+		});
+		mntmSendImage.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
+		mnChat.add(mntmSendImage);
+		
+		JMenuItem mntmSearchImage = new JMenuItem("Search Image...");
+		mntmSearchImage.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				imgSearchWindow.setVisible(true);
+			}
+		});
+		mntmSearchImage.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
+		mnChat.add(mntmSearchImage);
 		changeNameButton.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,Event.CTRL_MASK));
 		
 		userMenu.add(changeNameButton);
@@ -175,6 +204,9 @@ public class MeshChatWindow extends JFrame implements ChatConstants {
 
 	public ChatSystem getChatSystem() {
 		return chatSystem;
+	}
+	public ImageSearchWindow getImgSearchWindow() {
+		return imgSearchWindow;
 	}
 
 }
