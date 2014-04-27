@@ -94,7 +94,7 @@ public class RecieveServer implements Runnable, ChatConstants {
 			}
 		} catch (IOException e) {
 			System.err.println("Error binding server socket!");
-			ErrorHandler.handle(e);
+			ErrorHandler.handle(e,ErrorHandler.HandlerMode.CRITICAL);
 			throw new RuntimeException("Error binding server socket.", e);
 		}
 	}
