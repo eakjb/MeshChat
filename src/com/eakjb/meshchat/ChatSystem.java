@@ -1,5 +1,6 @@
 package com.eakjb.meshchat;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -7,10 +8,17 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.text.BadLocationException;
 
 import com.eakjb.meshchat.gui.MeshChatWindow;
 
@@ -20,9 +28,9 @@ public class ChatSystem implements Runnable, ChatConstants {
 	private final RecieveServer recieveServer = new RecieveServer(this);
 	private final MeshChatWindow frame = new MeshChatWindow(this);
 	private String localHostName;
-	
+
 	private String username = DEFAULTUSERNAME;
-	
+
 	public String getUsername() {
 		return username;
 	}
@@ -32,11 +40,11 @@ public class ChatSystem implements Runnable, ChatConstants {
 	}
 
 	private boolean running = true;
-	
+
 	public ChatSystem() throws UnknownHostException {
 		this(InetAddress.getLocalHost().getHostName());
 	}
-	
+
 	public ChatSystem(String localHostName) throws UnknownHostException {
 		this.setLocalHostName(localHostName);
 	}
@@ -45,30 +53,18 @@ public class ChatSystem implements Runnable, ChatConstants {
 		recieveServer.start();
 		frame.setVisible(true);
 	}
-	
-	public void updateUI() {		
-		StringBuffer b = new StringBuffer();
-		
-		for (String chat : chats) {
-			b.append(chat);
-			b.append("\n");
-		}
-		
-		frame.getTextArea().setText(b.toString());
-		frame.getMainAreaScroller().getVerticalScrollBar().setValue(frame.getMainAreaScroller().getVerticalScrollBar().getMaximum());
-	}
-	
+
 	public void updateAddresses(String address) throws IOException {
 		Socket sock = new Socket(address,PORT);
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
 		BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-		
+
 		//System.out.println("Writing message...");
 		out.write("1"+METASEPARATOR+"\n");
 		out.flush();
 
 		//System.out.println("Waiting for response...");
-		
+
 		StringBuffer b = new StringBuffer();
 		String line;
 		while((line=in.readLine())!=null) {
@@ -77,34 +73,34 @@ public class ChatSystem implements Runnable, ChatConstants {
 		}
 
 		addClients(b.toString().split(ADDRSEPARATOR));
-		
+
 		in.close();
 		out.close();
 		sock.close();
-		
+
 		sendChat(username+CONNECTMESSAGE);
 	}
-	
+
 	public void sendChat(String chat) {
 		sendStr(CHATBRACKETL+username+CHATBRACKETR+" "+chat);
 	}
-	
+
 	public void sendStr(String msg) {
 		for (String addr : addresses) {
 			Thread t = new Thread(new SendHandler(addr,msg));
 			t.start();
 		}		
 	}
-	
+
 	private class SendHandler implements Runnable {
 		private final String addr;
 		private final String chat;
-		
+
 		SendHandler(String addr,String chat) {
 			this.addr=addr;
 			this.chat=chat;
 		}
-		
+
 		@Override
 		public void run() {
 			try {
@@ -119,20 +115,65 @@ public class ChatSystem implements Runnable, ChatConstants {
 			}
 		}
 	}
-	
+
 	public void addChat(String chat) {
 		chats.add(chat);
 		System.out.println(chat);
-		updateUI();
+
+		//Render chat
+		try {
+			ArrayList<String> URLs = new ArrayList<String>();
+
+			Pattern pattern = Pattern.compile(IMGREGEX);
+			Matcher matcher = pattern.matcher(chat);
+			while (matcher.find()) {
+				URLs.add(matcher.group().replace(IMGTAGLEFT, "").replace(IMGTAGRIGHT, ""));
+			}
+
+			for (String s : chat.split(IMGSPLITREGEX)) {
+				//System.out.println(s);
+				if (URLs.contains(s)) {
+					BufferedImage img = null;
+					try {
+						img = ImageIO.read(new URL(s));
+					} catch (Exception e) {
+						ErrorHandler.handle(e);
+						try {
+							//System.out.println(ChatSystem.class.getResource("/img/question_mark.png").getPath());
+							img = ImageIO.read(ChatSystem.class.getResource(UNKNOWNIMAGEPATH));
+						} catch (Exception e1) {
+							ErrorHandler.handle(e1);
+						}
+					}
+					if (img != null) {
+						ImageIcon icon;
+						
+						if (img.getWidth()>IMGWIDTH) {
+							icon=new ImageIcon(img.getScaledInstance(IMGWIDTH, IMGWIDTH*img.getHeight()/img.getWidth(),1));
+						} else {
+							icon=new ImageIcon(img);
+						}
+						
+						frame.getTextArea().setCaretPosition(frame.getTextArea().getDocument().getEndPosition().getOffset()-1);
+						frame.getTextArea().insertIcon(icon);
+					}
+				} else {
+					frame.getTextArea().getDocument().insertString(frame.getTextArea().getDocument().getEndPosition().getOffset(), s, null);
+				}
+			}
+			frame.getTextArea().getDocument().insertString(frame.getTextArea().getDocument().getEndPosition().getOffset(), "\n", null);
+		} catch (BadLocationException e) {
+			ErrorHandler.handle(e);
+		}
 	}
-	
+
 	public void addClient(String client) throws UnknownHostException {
 		String ip = InetAddress.getByName(client).getHostAddress();
 		if (!addresses.contains(ip)) {
 			addresses.add(ip);
 		}
 	}
-	
+
 	public void addClients(Collection<String> addrs) throws UnknownHostException {
 		for (String c : addrs) {
 			addClient(c);
@@ -141,7 +182,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 	public void addClients(String[] addrs) throws UnknownHostException {
 		addClients(Arrays.asList(addrs));
 	}
-	
+
 	public ArrayList<String> getAddresses() {
 		return addresses;
 	}

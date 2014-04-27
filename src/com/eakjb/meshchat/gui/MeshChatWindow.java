@@ -19,15 +19,16 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
+import com.eakjb.meshchat.ChatConstants;
 import com.eakjb.meshchat.ChatSystem;
 import com.eakjb.meshchat.ErrorHandler;
 
-public class MeshChatWindow extends JFrame {
+public class MeshChatWindow extends JFrame implements ChatConstants {
 
 	/**
 	 * 
@@ -38,7 +39,7 @@ public class MeshChatWindow extends JFrame {
 	
 	private JPanel contentPane;
 	private JTextField textField;
-	private JTextArea textArea;
+	private JTextPane textArea;
 	private JScrollPane mainAreaScroller;
 	
 	public JScrollPane getMainAreaScroller() {
@@ -47,14 +48,16 @@ public class MeshChatWindow extends JFrame {
 
 	private JMenuBar menuBar;
 
-	public JTextArea getTextArea() {
+	public JTextPane getTextArea() {
 		return textArea;
 	}
-
+	public MeshChatWindow(final ChatSystem chatSystem) {
+		this(chatSystem,WELCOMEMESSAGE);
+	}
 	/**
 	 * Create the frame.
 	 */
-	public MeshChatWindow(final ChatSystem chatSystem) {
+	public MeshChatWindow(final ChatSystem chatSystem,String welcomeMessage) {
 		this.chatSystem=chatSystem;
 		
 		//Establish JFrame
@@ -123,10 +126,11 @@ public class MeshChatWindow extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		
-		textArea = new JTextArea();
+		textArea = new JTextPane();
 		textArea.setEditable(false);
-		textArea.setLineWrap(true);
+		//textArea.setLineWrap(true);
 		textArea.setFont(new Font("Dialog", Font.PLAIN, 11));
+		textArea.setText(welcomeMessage);
 		
 		mainAreaScroller = new JScrollPane(textArea,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		

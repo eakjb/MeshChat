@@ -8,4 +8,11 @@ public interface ChatConstants {
 	public static final String CHATBRACKETR = "]";
 	public static final String DEFAULTUSERNAME = "Guest";
 	public static final String CONNECTMESSAGE = " connected.";
+	public static final String WELCOMEMESSAGE = "Welcome to the system.";
+	public static final String IMGTAGLEFT = "<";
+	public static final String IMGTAGRIGHT = ">";
+	public static final String IMGREGEX = IMGTAGLEFT+".*"+IMGTAGRIGHT;
+	public static final String IMGSPLITREGEX = "[\\"+IMGTAGLEFT+"|\\"+IMGTAGRIGHT+"]";
+	public static final String UNKNOWNIMAGEPATH = "/img/question_mark.png";
+	public static final int IMGWIDTH = 250; 
 }
