@@ -136,7 +136,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 			}
 
 			for (String s : chat.split(URLSPLITREGEX)) {
-				System.out.println(s);
+				//System.out.println(s);
 				if (URLs.contains(s)) {
 					if (s.contains(IMGTAGLEFT)) {
 						BufferedImage img = loadImageFromURL(s.replace(IMGTAGLEFT, "").replace(IMGTAGRIGHT, ""));
