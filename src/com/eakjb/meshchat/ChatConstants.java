@@ -14,5 +14,6 @@ public interface ChatConstants {
 	public static final String IMGREGEX = IMGTAGLEFT+".*"+IMGTAGRIGHT;
 	public static final String IMGSPLITREGEX = "[\\"+IMGTAGLEFT+"|\\"+IMGTAGRIGHT+"]";
 	public static final String UNKNOWNIMAGEPATH = "/img/question_mark.png";
+	public static final String BUGREPORTURI = "http://github.com/eakjb/MeshChat/issues";
 	public static final int IMGWIDTH = 250; 
 }

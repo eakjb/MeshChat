@@ -1,15 +1,18 @@
 package com.eakjb.meshchat.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.Event;
 import java.awt.Font;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.net.URI;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -27,7 +30,6 @@ import javax.swing.border.EmptyBorder;
 import com.eakjb.meshchat.ChatConstants;
 import com.eakjb.meshchat.ChatSystem;
 import com.eakjb.meshchat.ErrorHandler;
-import java.awt.event.InputEvent;
 
 public class MeshChatWindow extends JFrame implements ChatConstants {
 
@@ -147,6 +149,24 @@ public class MeshChatWindow extends JFrame implements ChatConstants {
 		menuBar.add(userMenu);
 		
 		setJMenuBar(menuBar);
+		
+		JMenu mnHelp = new JMenu("Help");
+		menuBar.add(mnHelp);
+		
+		JMenuItem mntmSubmitBug = new JMenuItem("Submit Bug");
+		mntmSubmitBug.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+			    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+			        try {
+			            desktop.browse(new URI(BUGREPORTURI));
+			        } catch (Exception e1) {
+			            ErrorHandler.handle(e1);
+			        }
+			    }
+			}
+		});
+		mnHelp.add(mntmSubmitBug);
 		
 		
 		//Main GUI
