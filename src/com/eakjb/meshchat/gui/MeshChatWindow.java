@@ -100,7 +100,8 @@ public class MeshChatWindow extends JFrame implements ChatConstants {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					chatSystem.updateAddresses(JOptionPane.showInputDialog("Foreign Address: "));
+					String addr = JOptionPane.showInputDialog("Foreign Address: ");
+					if (addr!=null&&addr!="") chatSystem.updateAddresses(addr);
 				} catch (HeadlessException e) {
 					ErrorHandler.handle(e);
 				} catch (IOException e) {
@@ -129,7 +130,7 @@ public class MeshChatWindow extends JFrame implements ChatConstants {
 		mntmSendImage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				String img = JOptionPane.showInputDialog("Image URL:");
-				if (img!=null)chatSystem.sendChat(IMGTAGLEFT+img+IMGTAGRIGHT);
+				if (img!=null&&img!="")chatSystem.sendChat(IMGTAGLEFT+img+IMGTAGRIGHT);
 			}
 		});
 		mntmSendImage.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
