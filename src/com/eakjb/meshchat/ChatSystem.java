@@ -34,7 +34,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 	private String localHostName;
 
 	private String username = DEFAULTUSERNAME;
-	private ArrayList<String> localHosts;
+	private ArrayList<String> localHosts = new ArrayList<String>();
 
 	private boolean running = true;
 
@@ -48,11 +48,12 @@ public class ChatSystem implements Runnable, ChatConstants {
 			Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
 			for (; n.hasMoreElements();) {
 				NetworkInterface e = n.nextElement();
-				while (e.getInetAddresses().hasMoreElements()) {
-					localHosts.add(e.getInetAddresses().nextElement().getHostAddress());
+				Enumeration<InetAddress> as  =e.getInetAddresses();
+				while (as.hasMoreElements()) {
+					localHosts.add(as.nextElement().getHostAddress());
 				}
 			}
-		} catch (NullPointerException e) {
+		} catch (Exception e) {
 			throw new RuntimeException("Network Connection Error",e);
 		}
 	}
@@ -234,8 +235,8 @@ public class ChatSystem implements Runnable, ChatConstants {
 	}
 
 	public void setLocalHostName(String localHostName) throws UnknownHostException {
-		//this.getAddresses().remove(this.localHostName);
-		//this.addClient(localHostName);
+		this.getAddresses().remove(this.localHostName);
+		this.addClient(localHostName);
 		this.localHostName = localHostName;
 	}
 
