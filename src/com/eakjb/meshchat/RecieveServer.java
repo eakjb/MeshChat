@@ -38,20 +38,22 @@ public class RecieveServer implements Runnable, ChatConstants {
 				chatSystem.addClient(remoteIp);
 
 				BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+				//Helps with recieving all information
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+				}
 				StringBuffer b = new StringBuffer();
 				while(in.ready()) {
 					b.append(in.readLine());
 				}
+				
+				System.out.println(b.toString());
 
 				//Split into metadata and data then individual datum and passes it to DA system
 				String[] req = b.toString().split(METASEPARATOR);
-				String[] meta = req[0].split(ADDRSEPARATOR);
-				
-				int reqType = 0;
-				
-				if (meta[0].contains("1")) reqType=1;
 
-				if (reqType==0) {
+				if (req.length>1) {
 					//Chat
 					chatSystem.addChat(req[1]);
 				} else {
