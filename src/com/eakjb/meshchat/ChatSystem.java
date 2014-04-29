@@ -173,6 +173,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 				}
 			}
 			frame.getTextArea().getDocument().insertString(frame.getTextArea().getDocument().getEndPosition().getOffset(), "\n", null);
+			
 		} catch (BadLocationException e) {
 			ErrorHandler.handle(e);
 		}
@@ -199,7 +200,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 		String ip = InetAddress.getByName(client).getHostAddress();
 		if (!addresses.contains(ip)&&!localHosts.contains(ip)) {
 			addresses.add(ip);
-			System.out.println("Added CLient: "+ip);
+			//System.out.println("Added CLient: "+ip);
 		}
 	}
 
