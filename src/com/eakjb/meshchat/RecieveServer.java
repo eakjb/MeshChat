@@ -48,7 +48,7 @@ public class RecieveServer implements Runnable, ChatConstants {
 					b.append(in.readLine());
 				}
 				
-				System.out.println(b.toString());
+				//System.out.println(b.toString());
 
 				//Split into metadata and data then individual datum and passes it to DA system
 				String[] req = b.toString().split(METASEPARATOR);
