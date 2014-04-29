@@ -26,6 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import com.eakjb.meshchat.ChatConstants;
@@ -223,12 +224,17 @@ public class MeshChatWindow extends JFrame implements ChatConstants {
 		String msg = textField.getText();
 		textField.setText("");
 		chatSystem.sendChat(msg);
-		scrollToBottom();
 	}
 	
 	public void scrollToBottom() {
-		JScrollBar vertical = mainAreaScroller.getVerticalScrollBar();
-		vertical.setValue( vertical.getMaximum() );
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				JScrollBar vertical = mainAreaScroller.getVerticalScrollBar();
+				vertical.setValue(vertical.getMaximum());				
+			}
+			
+		});		
 	}
 
 	public ChatSystem getChatSystem() {
