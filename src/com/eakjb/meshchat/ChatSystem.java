@@ -173,6 +173,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 				}
 			}
 			frame.getTextArea().getDocument().insertString(frame.getTextArea().getDocument().getEndPosition().getOffset(), "\n", null);
+			frame.scrollToBottom();
 		} catch (BadLocationException e) {
 			ErrorHandler.handle(e);
 		}

@@ -21,6 +21,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -222,6 +223,12 @@ public class MeshChatWindow extends JFrame implements ChatConstants {
 		String msg = textField.getText();
 		textField.setText("");
 		chatSystem.sendChat(msg);
+		scrollToBottom();
+	}
+	
+	public void scrollToBottom() {
+		JScrollBar vertical = mainAreaScroller.getVerticalScrollBar();
+		vertical.setValue( vertical.getMaximum() );
 	}
 
 	public ChatSystem getChatSystem() {
