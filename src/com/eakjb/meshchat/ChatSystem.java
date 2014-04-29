@@ -103,7 +103,8 @@ public class ChatSystem implements Runnable, ChatConstants {
 			Thread t = new Thread(new SendHandler(addr,msg));
 			t.start();
 			//System.out.println("Sending to: "+addr);
-		}		
+		}
+		addChat(msg);
 	}
 
 	private class SendHandler implements Runnable {
@@ -120,7 +121,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 			try {
 				Socket sock = new Socket(addr,PORT);
 				BufferedWriter out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
-				out.write("0"+METASEPARATOR+chat);
+				out.write("0"+METASEPARATOR+chat+"\n");
 				out.flush();
 				out.close();
 				sock.close();
@@ -235,8 +236,8 @@ public class ChatSystem implements Runnable, ChatConstants {
 	}
 
 	public void setLocalHostName(String localHostName) throws UnknownHostException {
-		this.getAddresses().remove(this.localHostName);
-		this.addClient(localHostName);
+		//this.getAddresses().remove(this.localHostName);
+		//this.addClient(localHostName);
 		this.localHostName = localHostName;
 	}
 
