@@ -16,7 +16,7 @@ public class MeshChat {
 			ChatSystem sys = new ChatSystem();
 			sys.run();
 		} catch (Exception e) {
-			ErrorHandler.handle(e);
+			ErrorHandler.handle(e,ErrorHandler.HandlerMode.CRITICAL);
 		}
 	}
 

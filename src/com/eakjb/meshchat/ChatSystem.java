@@ -8,12 +8,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,23 +34,28 @@ public class ChatSystem implements Runnable, ChatConstants {
 	private String localHostName;
 
 	private String username = DEFAULTUSERNAME;
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
+	private ArrayList<String> localHosts = new ArrayList<String>();
 
 	private boolean running = true;
 
-	public ChatSystem() throws UnknownHostException {
+	public ChatSystem() throws UnknownHostException, SocketException {
 		this(InetAddress.getLocalHost().getHostName());
 	}
 
-	public ChatSystem(String localHostName) throws UnknownHostException {
+	public ChatSystem(String localHostName) throws SocketException, UnknownHostException {
 		this.setLocalHostName(localHostName);
+		try {
+			Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
+			for (; n.hasMoreElements();) {
+				NetworkInterface e = n.nextElement();
+				Enumeration<InetAddress> as  =e.getInetAddresses();
+				while (as.hasMoreElements()) {
+					localHosts.add(as.nextElement().getHostAddress());
+				}
+			}
+		} catch (Exception e) {
+			throw new RuntimeException("Network Connection Error",e);
+		}
 	}
 
 	public void run() {
@@ -94,7 +102,9 @@ public class ChatSystem implements Runnable, ChatConstants {
 		for (String addr : addresses) {
 			Thread t = new Thread(new SendHandler(addr,msg));
 			t.start();
-		}		
+			//System.out.println("Sending to: "+addr);
+		}
+		addChat(msg);
 	}
 
 	private class SendHandler implements Runnable {
@@ -111,7 +121,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 			try {
 				Socket sock = new Socket(addr,PORT);
 				BufferedWriter out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
-				out.write("0"+METASEPARATOR+chat);
+				out.write("0"+METASEPARATOR+chat+"\n");
 				out.flush();
 				out.close();
 				sock.close();
@@ -163,9 +173,11 @@ public class ChatSystem implements Runnable, ChatConstants {
 				}
 			}
 			frame.getTextArea().getDocument().insertString(frame.getTextArea().getDocument().getEndPosition().getOffset(), "\n", null);
+			
 		} catch (BadLocationException e) {
 			ErrorHandler.handle(e);
 		}
+		frame.scrollToBottom();
 	}
 
 	public static BufferedImage loadImageFromURL(String url) {
@@ -186,8 +198,9 @@ public class ChatSystem implements Runnable, ChatConstants {
 
 	public void addClient(String client) throws UnknownHostException {
 		String ip = InetAddress.getByName(client).getHostAddress();
-		if (!addresses.contains(ip)) {
+		if (!addresses.contains(ip)&&!localHosts.contains(ip)) {
 			addresses.add(ip);
+			//System.out.println("Added CLient: "+ip);
 		}
 	}
 
@@ -225,8 +238,21 @@ public class ChatSystem implements Runnable, ChatConstants {
 	}
 
 	public void setLocalHostName(String localHostName) throws UnknownHostException {
-		this.getAddresses().remove(this.localHostName);
-		this.addClient(localHostName);
+		//this.getAddresses().remove(this.localHostName);
+		//this.addClient(localHostName);
 		this.localHostName = localHostName;
+	}
+
+	public ArrayList<String> getLocalHosts() {
+		return localHosts;
+	}
+
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 }

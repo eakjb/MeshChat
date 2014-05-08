@@ -21,10 +21,12 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import com.eakjb.meshchat.ChatConstants;
@@ -100,7 +102,8 @@ public class MeshChatWindow extends JFrame implements ChatConstants {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					chatSystem.updateAddresses(JOptionPane.showInputDialog("Foreign Address: "));
+					String addr = JOptionPane.showInputDialog("Foreign Address: ");
+					if (addr!=null&&addr!="") chatSystem.updateAddresses(addr);
 				} catch (HeadlessException e) {
 					ErrorHandler.handle(e);
 				} catch (IOException e) {
@@ -129,7 +132,7 @@ public class MeshChatWindow extends JFrame implements ChatConstants {
 		mntmSendImage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				String img = JOptionPane.showInputDialog("Image URL:");
-				if (img!=null)chatSystem.sendChat(IMGTAGLEFT+img+IMGTAGRIGHT);
+				if (img!=null&&img!="")chatSystem.sendChat(IMGTAGLEFT+img+IMGTAGRIGHT);
 			}
 		});
 		mntmSendImage.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
@@ -221,6 +224,17 @@ public class MeshChatWindow extends JFrame implements ChatConstants {
 		String msg = textField.getText();
 		textField.setText("");
 		chatSystem.sendChat(msg);
+	}
+	
+	public void scrollToBottom() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				JScrollBar vertical = mainAreaScroller.getVerticalScrollBar();
+				vertical.setValue(vertical.getMaximum());				
+			}
+			
+		});		
 	}
 
 	public ChatSystem getChatSystem() {
