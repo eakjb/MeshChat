@@ -37,13 +37,20 @@ public class ChatSystem implements Runnable, ChatConstants {
 	private ArrayList<String> localHosts = new ArrayList<String>();
 
 	private boolean running = true;
+	
+	private final int port;
 
 	public ChatSystem() throws UnknownHostException, SocketException {
-		this(InetAddress.getLocalHost().getHostName());
+		this(DEFAULTPORT);
+	}
+	
+	public ChatSystem(int port) throws UnknownHostException, SocketException {
+		this(InetAddress.getLocalHost().getHostName(),DEFAULTPORT);
 	}
 
-	public ChatSystem(String localHostName) throws SocketException, UnknownHostException {
+	public ChatSystem(String localHostName, int port) throws SocketException, UnknownHostException {
 		this.setLocalHostName(localHostName);
+		this.port=port;
 		try {
 			Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
 			for (; n.hasMoreElements();) {
@@ -64,7 +71,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 	}
 
 	public void updateAddresses(String address) throws IOException {
-		Socket sock = new Socket(address,PORT);
+		Socket sock = new Socket(address,port);
 		BufferedWriter out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
 		BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 
@@ -119,7 +126,7 @@ public class ChatSystem implements Runnable, ChatConstants {
 		@Override
 		public void run() {
 			try {
-				Socket sock = new Socket(addr,PORT);
+				Socket sock = new Socket(addr,port);
 				BufferedWriter out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
 				out.write("0"+METASEPARATOR+chat+"\n");
 				out.flush();
@@ -254,5 +261,9 @@ public class ChatSystem implements Runnable, ChatConstants {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public int getPort() {
+		return port;
 	}
 }

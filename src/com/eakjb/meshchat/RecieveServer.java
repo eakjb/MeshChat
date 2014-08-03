@@ -36,6 +36,7 @@ public class RecieveServer implements Runnable, ChatConstants {
 			try {
 				String remoteIp = sock.getRemoteSocketAddress().toString().split(":")[0].replace("/", "");
 				chatSystem.addClient(remoteIp);
+				//System.out.println(remoteIp);
 
 				BufferedReader in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 				//Helps with recieving all information
@@ -146,7 +147,7 @@ public class RecieveServer implements Runnable, ChatConstants {
 	public void run() {
 		ServerSocket sock;
 		try {
-			sock = new ServerSocket(PORT);
+			sock = new ServerSocket(chatSystem.getPort());
 			while(chatSystem.isRunning()) {
 				try {
 					loop(sock);

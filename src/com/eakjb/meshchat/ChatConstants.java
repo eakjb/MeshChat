@@ -1,7 +1,7 @@
 package com.eakjb.meshchat;
 
 public interface ChatConstants {
-	public static final int PORT = 6969;
+	public static final int DEFAULTPORT = 6969;
 	public static final String METASEPARATOR = ";";
 	public static final String ADDRSEPARATOR = ",";
 	public static final String CHATBRACKETL = "[";
